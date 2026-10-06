@@ -6,8 +6,8 @@ document.addEventListener('touchmove',preventCoverScroll,{passive:false});docume
 if(!document.body.classList.contains('entered'))window.scrollTo(0,0);
 function toast(message){const el=document.querySelector('.toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000)}
 let musicState='idle',playPending=false,wantsMusic=false;
-const musicSource=audio.canPlayType('audio/mp4; codecs="mp4a.40.2"')?'assets/audio/lagou-mobile.m4a':'assets/audio/lagou-mobile.mp3';
-audio.src=musicSource;audio.muted=false;audio.volume=1;
+const musicSource=audio.canPlayType('audio/mp4; codecs="mp4a.40.2"')?'https://wedding-music-1501189482.cos.ap-nanjing.myqcloud.com/lagou-cos.m4a':'assets/audio/lagou-mobile.mp3';
+audio.preload='auto';audio.src=musicSource;audio.muted=false;audio.volume=1;audio.load();
 function syncMusic(){const playing=musicState==='playing'&&!audio.paused;music.classList.toggle('playing',playing);music.setAttribute('aria-pressed',String(playing));music.setAttribute('aria-label',playing?'暂停背景音乐':'播放背景音乐');music.querySelector('span').textContent=playing?'暂停':musicState==='loading'?'加载中':'音乐'}
 function playMusic(notify=false){wantsMusic=true;if(userPaused||playPending)return;playPending=true;musicState='loading';syncMusic();let result;try{result=audio.play()}catch(error){failed(error);return}Promise.resolve(result).then(()=>{playPending=false;musicState='playing';syncMusic()}).catch(failed);function failed(error){playPending=false;musicState='idle';syncMusic();if(notify)toast(error.name==='NotAllowedError'?'请轻触右上角音乐按钮开始播放':'音乐暂未播放，请轻触右上角重试')}}
 audio.addEventListener('playing',()=>{musicState='playing';syncMusic()});audio.addEventListener('waiting',()=>{musicState='loading';syncMusic()});audio.addEventListener('pause',()=>{musicState='idle';syncMusic()});
