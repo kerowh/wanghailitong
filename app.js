@@ -1,6 +1,9 @@
 (()=>{'use strict';
 const audio=document.querySelector('#bgm'),music=document.querySelector('.music-control'),enter=document.querySelector('#enter');let userPaused=false;
 audio.volume=.5;
+function preventCoverScroll(event){if(!document.body.classList.contains('entered'))event.preventDefault()}
+document.addEventListener('touchmove',preventCoverScroll,{passive:false});document.addEventListener('wheel',preventCoverScroll,{passive:false});document.addEventListener('keydown',event=>{if(!document.body.classList.contains('entered')&&['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' '].includes(event.key)&&!event.target.closest('button,a,input,textarea,select'))event.preventDefault()});
+if(!document.body.classList.contains('entered'))window.scrollTo(0,0);
 function toast(message){const el=document.querySelector('.toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3000)}
 function syncMusic(){const playing=!audio.paused;music.classList.toggle('playing',playing);music.setAttribute('aria-pressed',String(playing));music.setAttribute('aria-label',playing?'暂停背景音乐':'播放背景音乐');music.querySelector('span').textContent=playing?'暂停':'音乐'}
 async function playMusic(notify=false){try{await audio.play()}catch{if(notify)toast('音乐暂未播放，轻触右上角可重试')}syncMusic()}
